@@ -17,7 +17,7 @@ public class TomcatServerCustomer implements WebServerFactoryCustomizer<TomcatSe
     @Override
     public void customize(TomcatServletWebServerFactory factory) {
         final Connector httpConn = new Connector("HTTP/1.1");
-        httpConn.setPort(9307);
+        httpConn.setPort(8080);
         factory.addAdditionalTomcatConnectors(httpConn);
     }
 }

@@ -49,7 +49,7 @@ public class ArticlesC {
         return json.createJson(list);
     }
     // 阅读量 ，得到需要的文章，想数据库中更新阅读量
-    @RequestMapping(value = "/Views",method = {RequestMethod.POST})
+    @RequestMapping(value = "/Views",method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
     public JSONObject increaseViewCount(HttpServletRequest request,HttpServletResponse responses) throws Exception{
         JSONObject jsonObject;

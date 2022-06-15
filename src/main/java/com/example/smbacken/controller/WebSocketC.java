@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArraySet;
 @Slf4j
@@ -41,13 +43,11 @@ public class WebSocketC {
         addOnlineCount();
         System.out.println("有新连接加入！当前在线人数为："+getOnlineCount());
     }
-//    @SneakyThrows
+    @SneakyThrows
     @OnMessage//收到消息执行
-    public void onMessage(String condition,Session session) throws IOException {
+    public void onMessage(String condition,Session session){
         JSONObject jsonObject = JSONObject.parseObject(condition);
-        List<Object> list= getList(jsonObject.getString("condition"));
-//        System.out.println(list);
-        sendMessage(list);
+        sendMessage(String.valueOf(getList(jsonObject.getString("condition"))));
     }
     @OnClose//关闭连接执行
     public void onClose(Session session) {
@@ -66,9 +66,12 @@ public class WebSocketC {
    getBasicRemote()  getAsyncRemote()和getBasicRemote()是异步与同步的区别，
    大部分情况下，推荐使用getAsyncRemote()。
   */
-    public void sendMessage(List<Object> message) throws IOException {
+    public void sendMessage(String message) throws IOException {
         Json json = new Json();
-        this.session.getAsyncRemote().sendText(String.valueOf(json.createJson(message)));
+        String response = message.substring(2,message.length()-2);
+        String str[] = response.split(",");
+        List<String> list = Arrays.asList(str);
+        session.getBasicRemote().sendText(String.valueOf(json.createJson(list)));
     }
 
     public static synchronized int getOnlineCount(){
