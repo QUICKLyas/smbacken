@@ -19,6 +19,7 @@ import java.util.List;
 @Slf4j
 @Validated
 @RestController
+@CrossOrigin
 @RequestMapping("ABIC") // ArticleBriefInfoC
 public class ArticleBriefInfoC {
 

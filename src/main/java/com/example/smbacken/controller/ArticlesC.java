@@ -9,10 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +22,7 @@ import java.util.List;
 @Slf4j
 @Validated
 @RestController
+@CrossOrigin
 @RequestMapping("AC") // ArticlesC
 public class ArticlesC {
     @Autowired
@@ -32,6 +30,7 @@ public class ArticlesC {
     @Autowired(required = false)
     private Json json;
     // 通过Id获取文章
+    @CrossOrigin
     @RequestMapping (value = "/findAll", method = {RequestMethod.GET,RequestMethod.POST})
     public JSONObject findAll(HttpServletRequest request, HttpServletResponse response){
         JSONObject jsonObject;
@@ -49,10 +48,12 @@ public class ArticlesC {
         return json.createJson(list);
     }
     // 阅读量 ，得到需要的文章，想数据库中更新阅读量
+    @CrossOrigin
     @RequestMapping(value = "/Views",method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
     public JSONObject increaseViewCount(HttpServletRequest request,HttpServletResponse responses) throws Exception{
         JSONObject jsonObject;
+        responses = json.setRespBody(responses);
         try {
             //获取body内容，并且以JSONObject保存
             jsonObject = json.getReqBody(request);

@@ -3,6 +3,7 @@ package com.example.smbacken.util;
 import com.alibaba.fastjson.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
@@ -20,7 +21,7 @@ public class Json {
         BufferedReader reader = request.getReader();
         StringBuilder builder = new StringBuilder();
         String line = reader.readLine();
-        while(line != null){
+        while (line != null) {
             builder.append(line);
             line = reader.readLine();
         }
@@ -36,5 +37,10 @@ public class Json {
         System.out.println("recv json data:" + json);
         // return
         return json;
+    }
+    public static HttpServletResponse setRespBody(HttpServletResponse response) {
+        response.setHeader("Access-Control-Allow-Origin","*");
+        response.setHeader("Access-Control-Allow-Credentials","true");
+        return response;
     }
 }

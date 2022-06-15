@@ -7,6 +7,7 @@ import com.example.smbacken.util.Json;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +20,7 @@ import java.util.List;
 @Slf4j
 @Validated
 @RestController
+@CrossOrigin
 @RequestMapping("ALC") // ArticlesListC
 public class ArticlesListC {
     @Autowired
@@ -32,24 +34,34 @@ public class ArticlesListC {
     @RequestMapping (value = "/FSortByL", method = {RequestMethod.GET,RequestMethod.POST})
     public JSONObject findSortByLike(HttpServletRequest request, HttpServletResponse response){
         String condition = "like";
+        response = json.setRespBody(response);
+
         return findSortMain(request,condition);
     }
     //find sort by views
     @RequestMapping(value = "/FSortByV", method = {RequestMethod.GET,RequestMethod.POST})
     public JSONObject findSortByViews(HttpServletRequest request, HttpServletResponse response){
         String condition = "views";
+        response = json.setRespBody(response);
+
         return findSortMain(request,condition);
     }
     //find sort by comments
+
     @RequestMapping(value = "/FSortByC", method = {RequestMethod.GET,RequestMethod.POST})
     public JSONObject findSortByComments(HttpServletRequest request, HttpServletResponse response){
         String condition = "comments";
+        response = json.setRespBody(response);
+
         return findSortMain(request,condition);
     }
     // 联想搜索的http接口
+
     @RequestMapping (value = "/SElementByObj", method = {RequestMethod.GET,RequestMethod.POST})
     public JSONObject SElementByObj(HttpServletRequest request, HttpServletResponse response){
         JSONObject jsonObject;
+        response = json.setRespBody(response);
+
         List<Object> list;
         try {
             jsonObject = json.getReqBody(request);
