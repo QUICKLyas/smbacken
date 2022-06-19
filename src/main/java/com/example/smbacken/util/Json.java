@@ -16,6 +16,14 @@ public class Json {
         jsonContainer.put("errno",200);
         return jsonContainer;
     }
+
+    public static JSONObject createJson(Object obj,String errmsg,int errno){
+        JSONObject jsonContainer = new JSONObject();
+        jsonContainer.put("data", obj);
+        jsonContainer.put("errmsg",errmsg);
+        jsonContainer.put("errno",errno);
+        return jsonContainer;
+    }
     public static JSONObject getReqBody(HttpServletRequest request) throws IOException {
         // 直接从HttpServletRequest的Reader流中获取RequestBody
         BufferedReader reader = request.getReader();
@@ -40,7 +48,10 @@ public class Json {
     }
     public static HttpServletResponse setRespBody(HttpServletResponse response) {
         response.setHeader("Access-Control-Allow-Origin","*");
-        response.setHeader("Access-Control-Allow-Credentials","true");
+        // response.setHeader("Access-Control-Allow-Credentials","true");
+        response.setHeader("Access-Control-Allow-Methods", "POST,GET,OPTIONS,DELETE,HEAD,PUT,PATCH");
+        response.setHeader("Access-Control-Max-Age", "36000");
+        response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept,Authorization,authorization");
         return response;
     }
 }

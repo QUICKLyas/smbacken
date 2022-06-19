@@ -8,4 +8,8 @@ import java.util.List;
 @Service
 public interface AuthCodeService {
     public List<AuthCode> findAuthCodeAll();
+
+    public void addAuthCode(AuthCode authCode);
+    public void isAuthExist(AuthCode authCode);
+    public AuthCode getCode(String phone);
 }

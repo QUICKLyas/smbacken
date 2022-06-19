@@ -22,4 +22,19 @@ public class AuthCodeServiceImpl implements AuthCodeService {
     public List<AuthCode> findAuthCodeAll() {
         return mongoTemplate.findAll(AuthCode.class);
     }
+
+    @Override
+    public void addAuthCode(AuthCode authCode) {
+        mongoTemplate.findOne();
+    }
+
+    @Override
+    public void isAuthExist(AuthCode authCode) {
+
+    }
+
+    @Override
+    public AuthCode getCode(String phone) {
+        return null;
+    }
 }

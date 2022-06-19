@@ -10,14 +10,16 @@ import org.springframework.data.mongodb.core.mapping.MongoId;
 public class AuthCode {
     @MongoId
     private ObjectId _id;
+    private String phone;
     private String email;
     private String code;
 
     public AuthCode() {
     }
 
-    public AuthCode(ObjectId _id, String email, String code) {
+    public AuthCode(ObjectId _id, String phone, String email, String code) {
         this._id = _id;
+        this.phone = phone;
         this.email = email;
         this.code = code;
     }
@@ -26,9 +28,18 @@ public class AuthCode {
     public String toString() {
         return "AuthCode{" +
                 "_id=" + _id +
+                ", phone='" + phone + '\'' +
                 ", email='" + email + '\'' +
                 ", code='" + code + '\'' +
                 '}';
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public ObjectId get_id() {
