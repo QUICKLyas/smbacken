@@ -1,27 +1,16 @@
 package com.example.smbacken.util;
 
 import com.alibaba.fastjson.JSON;
-import com.github.qcloudsms.SmsSingleSender;
-import com.github.qcloudsms.SmsSingleSenderResult;
-import com.github.qcloudsms.httpclient.HTTPException;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONException;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
 import java.util.*;
 
 public class SendCodeUtils {
@@ -38,7 +27,7 @@ public class SendCodeUtils {
     private static final String NONCE = "123456";
     // TODO
     // 短信模板ID
-    private static final String TEMPLATEID = "19518725";
+    private static final String TEMPLATEID = "19507839";
     // TODO
     // 手机号
     private static final String MOBILE = "1864283";
@@ -102,18 +91,19 @@ public class SendCodeUtils {
          * 1.打印执行结果，打印结果一般会200、315、403、404、413、414、500
          * 2.具体的code有问题的可以参考官网的Code状态表
          */
-        System.out.println(result);// {"code":200,"msg":"105","obj":"410626"}
         //--------------------- 接受返回参数，判断---------------------
         // 验证码
         String obj = JSON.parseObject(result).getString("obj");
         //获取发送状态码
         String code = JSON.parseObject(result).getString("code");
+
         if (code.equals("200")) {
             // 发送成功
-            System.out.println("验证码发送成功");
+            // result {"code":200,"msg":"105","obj":"410626"}
+            DateF.getTime(result + ": 验证码发送成功。");
         } else {
             // 发送失败
-            System.out.println("验证码发送失败");
+            DateF.getTime(result + ": 验证码发送失败");
         }
         return obj;
     }

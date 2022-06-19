@@ -1,10 +1,8 @@
 package com.example.smbacken.service.Impl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.example.smbacken.javabean.ArticlesList;
 import com.example.smbacken.service.ArticlesListService;
 import com.example.smbacken.util.trie.TrieTree;
-import com.mongodb.lang.Nullable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;

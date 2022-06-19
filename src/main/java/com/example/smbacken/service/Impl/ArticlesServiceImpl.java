@@ -2,13 +2,11 @@ package com.example.smbacken.service.Impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.example.smbacken.javabean.Articles;
-import com.example.smbacken.javabean.ArticlesList;
 import com.example.smbacken.service.ArticlesService;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.ArrayOperators;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;

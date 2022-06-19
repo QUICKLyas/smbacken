@@ -1,6 +1,5 @@
 package com.example.smbacken.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.example.smbacken.javabean.AuthCode;
 import com.example.smbacken.service.AuthCodeService;
@@ -32,7 +31,6 @@ public class AuthCodeC {
     public JSONObject getMessageCode(@RequestBody AuthCode authCode, HttpServletRequest request, HttpServletResponse response){
         // 设置response
         response = json.setRespBody(response);
-        authCode.setCode("123456");
         // 设置返回信息的缓存变量
         int errno = 200;
         String errmsg = "验证码获取成功";
@@ -46,11 +44,11 @@ public class AuthCodeC {
             errmsg = "请输入正确格式手机号";
         }
         // 这个是获取验证码主体代码，获取验证码
-//        authCode.setCode(SendCodeUtils.getCode(authCode.getPhone()));
-//        if("".equals(authCode.getCode())){
-//            errno = 3003;
-//            errmsg = "获取验证码失败，请重试";
-//        }
+        authCode.setCode(SendCodeUtils.getCode(authCode.getPhone()));
+        if("".equals(authCode.getCode())){
+            errno = 3003;
+            errmsg = "获取验证码失败，请重试";
+        }
         // 连接service层,将数据添加到数据库中
         authCodeService.addAuthCode(authCode);
         return json.createJson(null,errmsg,errno);

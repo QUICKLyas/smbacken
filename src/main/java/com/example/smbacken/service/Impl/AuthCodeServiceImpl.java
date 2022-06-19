@@ -1,13 +1,10 @@
 package com.example.smbacken.service.Impl;
 
-import com.example.smbacken.javabean.ArticlesList;
 import com.example.smbacken.javabean.AuthCode;
 import com.example.smbacken.service.AuthCodeService;
 import com.example.smbacken.util.DateF;
-import com.example.smbacken.util.trie.TrieTree;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -15,8 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
