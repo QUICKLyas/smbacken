@@ -1,99 +1,140 @@
 package com.example.smbacken.util;
 
+import com.alibaba.fastjson.JSON;
 import com.github.qcloudsms.SmsSingleSender;
 import com.github.qcloudsms.SmsSingleSenderResult;
 import com.github.qcloudsms.httpclient.HTTPException;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpException;
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.*;
 
 public class SendCodeUtils {
-    //查账户信息的http地址
-//    private static String URI_GET_USER_INFO =
-//            "https://sms.yunpian.com/v2/user/get.json";
-//    //智能匹配模板发送接口的http地址
-//    private static String URI_SEND_SMS =
-//            "https://sms.yunpian.com/v2/sms/single_send.json";
-//    //模板发送接口的http地址
-//    private static String URI_TPL_SEND_SMS =
-//            "https://sms.yunpian.com/v2/sms/tpl_single_send.json";
-//    //发送语音验证码接口的http地址
-//    private static String URI_SEND_VOICE =
-//            "https://voice.yunpian.com/v2/voice/send.json";
-//    //绑定主叫、被叫关系的接口http地址
-//    private static String URI_SEND_BIND =
-//            "https://call.yunpian.com/v2/call/bind.json";
-//    //解绑主叫、被叫关系的接口http地址
-//    private static String URI_SEND_UNBIND =
-//            "https://call.yunpian.com/v2/call/unbind.json";
-//    //编码格式。发送编码格式统一用UTF-8
-//    private static String ENCODING = "UTF-8";
-//    //修改为您的apikey.apikey可在官网（http://www.yunpian.com)登录后获取
-//    private static String apikey = "1400694354";
-//    //设置模板ID，如使用1号模板:【#company#】您的验证码是#code#
-//    long tpl_id = 2937596;
-    // 设置一下发送的编码的格式
-
-    private static int appId = 1400694354;
-    private static String apikey = "80cf03b212fb2e7d340641184aa3685b";
-    private static int templateId = 1445638;
-    private static String smsSign = "smbacken.0";
-    private static String str = "0123456789";
-
-    private static int capacity = 6;
+    //---------------------- 固定格式----------------
+    //发送验证码的请求路径URL
+    private static final String SERVER_URL = "https://api.netease.im/sms/sendcode.action";
+    // TODO
+    // 网易云信分配的账号，请替换你在管理后台应用下申请的Appkey
+    private static final String APP_KEY = "2ceab4c8ded1e2dfb4b2a5a4b930b9d5";
+    // TODO
+    // 网易云信分配的密钥，请替换你在管理后台应用下申请的appSecret
+    private static final String APP_SECRET = "71ebc1beb5f1";
+    //随机数
+    private static final String NONCE = "123456";
+    // TODO
+    // 短信模板ID
+    private static final String TEMPLATEID = "19518725";
+    // TODO
+    // 手机号
+    private static final String MOBILE = "1864283";
+    //验证码长度，范围4～10，默认为4
+    private static final String CODELEN = "6";
     /**
      * 通过电话获取验证
      * @param phone
      * @return
      */
     public static String getCode(String phone) {
-        StringBuilder stringBuilder = new StringBuilder(capacity);
-        // 随机生成一个验证码，长度默认设置为 acpacuty = 6
-        for (int i = 0 ; i < capacity ; i++ ){
-            char ch = str.charAt(new Random().nextInt(str.length()));
-            stringBuilder.append(ch);
+        String code = "";
+        try {
+            code = SendCodeUtils.sendSms(phone);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        // 查账户信息调用示例
-        // 使用智能匹配模板接口发短信(推荐)
-        // 设置您要发送的内容(内容必须和某个模板匹配。以下例子匹配的是系统提供的1号模板）
-        // 发送短信的实例
-        SendCodeUtils.sendSms(stringBuilder.toString(),phone);
         // 返回到controller层，并存储到对应的对象中
-        String code = stringBuilder.toString();
         return code;
     }
 
     /**
      *
-     * @param text
      * @param phone
      */
-    private static void sendSms(String text, String phone) {
-        String[] params = {text};
-        try {
-            SmsSingleSender sendMessage = new SmsSingleSender(appId, apikey);
-            SmsSingleSenderResult result = sendMessage.sendWithParam("86",phone,templateId,
-                    params,smsSign,"","");
-            System.out.println(result);
-        } catch (HTTPException | JSONException e) {
-            System.err.println("HttpException | JSONException e");
-            e.printStackTrace();
-        } catch (IOException e) {
-            System.err.println("IOException");
-            e.printStackTrace();
+    private static String sendSms(String phone) throws IOException {
+        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+
+        HttpPost httpPost = new HttpPost(SERVER_URL);
+        String curTime = String.valueOf((new Date()).getTime() / 1000L);
+        /*
+         * 参考计算CheckSum的java代码，在上述文档的参数列表中，有CheckSum的计算文档示例
+         */
+        String checkSum = CheckSumBuilder.getCheckSum(APP_SECRET, NONCE, curTime);
+
+        // 设置请求的header
+        httpPost.addHeader("AppKey", APP_KEY);
+        httpPost.addHeader("Nonce", NONCE);
+        httpPost.addHeader("CurTime", curTime);
+        httpPost.addHeader("CheckSum", checkSum);
+        httpPost.addHeader("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
+
+        // 设置请求的的参数，requestBody参数
+        List<NameValuePair> nvps = new ArrayList<>();
+        /*
+         * 1.如果是模板短信，请注意参数mobile是有s的，详细参数配置请参考“发送模板短信文档”
+         * 2.参数格式是jsonArray的格式，例如 "['13888888888','13666666666']"
+         * 3.params是根据你模板里面有几个参数，那里面的参数也是jsonArray格式
+         */
+        nvps.add(new BasicNameValuePair("templateid", TEMPLATEID));
+        nvps.add(new BasicNameValuePair("mobile", phone));
+        nvps.add(new BasicNameValuePair("codeLen", CODELEN));
+
+        httpPost.setEntity(new UrlEncodedFormEntity(nvps, "utf-8"));
+
+        // 执行请求
+        HttpResponse response = httpClient.execute(httpPost);
+
+        String result = EntityUtils.toString(response.getEntity(), "utf-8");
+        /*
+         * 1.打印执行结果，打印结果一般会200、315、403、404、413、414、500
+         * 2.具体的code有问题的可以参考官网的Code状态表
+         */
+        System.out.println(result);// {"code":200,"msg":"105","obj":"410626"}
+        //--------------------- 接受返回参数，判断---------------------
+        // 验证码
+        String obj = JSON.parseObject(result).getString("obj");
+        //获取发送状态码
+        String code = JSON.parseObject(result).getString("code");
+        if (code.equals("200")) {
+            // 发送成功
+            System.out.println("验证码发送成功");
+        } else {
+            // 发送失败
+            System.out.println("验证码发送失败");
         }
+        return obj;
     }
+        // 闪速码
+//        Client client = new Client();
+//        client.setAppId("hw_11199");     //开发者ID，在【设置】-【开发设置】中获取
+//        client.setSecretKey("24fc7611fa5e593da3606fbe12a48c50");    //开发者密钥，在【设置】-【开发设置】中获取
+//        client.setVersion("1.0");
+//
+//        /**
+//         *   json格式可在 bejson.com 进行校验
+//         */
+//        String singnstr = "smbacken";
+//        Client.Request request = new Client.Request();
+//        request.setMethod("sms.message.send");
+//        request.setBizContent("{\"mobile\":[\""+ phone +"\"],\"type\":0,\"template_id\":" +
+//                "\"ST_2020101100000007\",\"sign\":\""
+//                + singnstr +"\",\"send_time\":\""+ client.getTimestamp() +"\",\"params\":{\"code\":"+code+"}}");
+//        // 这里是json字符串，send_time 为空时可以为null,
+//        // params 为空时可以为null,短信签名填写审核后的签名本身，不需要填写签名id
+//        System.out.println( client.execute(request) );
+//    }
 
 }
