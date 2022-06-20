@@ -13,16 +13,9 @@ public class Users {
     private String token;
     private String password;
     private String username;
+    private String phone;
 
     public Users() {
-    }
-
-    public Users(String _id, String email, String token, String password, String username) {
-        this._id = _id;
-        this.email = email;
-        this.token = token;
-        this.password = password;
-        this.username = username;
     }
 
     @Override
@@ -33,7 +26,25 @@ public class Users {
                 ", token='" + token + '\'' +
                 ", password='" + password + '\'' +
                 ", username='" + username + '\'' +
+                ", phone='" + phone + '\'' +
                 '}';
+    }
+
+    public Users(String _id, String email, String token, String password, String username, String phone) {
+        this._id = _id;
+        this.email = email;
+        this.token = token;
+        this.password = password;
+        this.username = username;
+        this.phone = phone;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String get_id() {

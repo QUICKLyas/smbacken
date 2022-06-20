@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.Map;
 
 public class Json {
     public static JSONObject createJson(Object obj){
@@ -15,12 +16,24 @@ public class Json {
         jsonContainer.put("errno",200);
         return jsonContainer;
     }
-
     public static JSONObject createJson(Object obj,String errmsg,int errno){
         JSONObject jsonContainer = new JSONObject();
         jsonContainer.put("data", obj);
         jsonContainer.put("errmsg",errmsg);
         jsonContainer.put("errno",errno);
+        return jsonContainer;
+    }
+    // data => needRegister
+    public static JSONObject createJson(Map<String,Object> objs){
+        JSONObject jsonContainer = new JSONObject(objs);
+        jsonContainer.put("errmsg","success");
+        jsonContainer.put("errno",200);
+        return jsonContainer;
+    }
+    public static JSONObject createJson(Map<String,Object> objs,String errmsg, int errno){
+        objs.put("errmsg",errmsg);
+        objs.put("errno",errno);
+        JSONObject jsonContainer = new JSONObject(objs);
         return jsonContainer;
     }
     public static JSONObject getReqBody(HttpServletRequest request) throws IOException {

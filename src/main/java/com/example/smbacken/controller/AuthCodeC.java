@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Validated
@@ -26,14 +28,29 @@ public class AuthCodeC {
     private AuthCodeService authCodeService;
     @Autowired(required = false)
     private Json json;
+    @Autowired
+    private UsersC usersC;
     @SneakyThrows
     @RequestMapping (value = "/g-msg-code", method = {RequestMethod.GET,RequestMethod.POST})
     public JSONObject getMessageCode(@RequestBody AuthCode authCode, HttpServletRequest request, HttpServletResponse response){
+        Map<String,Object> map = new HashMap<String, Object>();
         // 设置response
         response = json.setRespBody(response);
         // 设置返回信息的缓存变量
         int errno = 200;
         String errmsg = "验证码获取成功";
+        // 首先判断是否存在这个用户 ，存在就继续，不存在我们返回前端信息，并等待下次的请求
+        if(usersC.isUserExist(authCode.getPhone())){ // 表示用户存在，不需要注册 needRegister: false
+            map.put("needRegister", false);
+            map.put("success",true);
+        } else { // 表示用户不存在，需要注册 needRegister: true
+            usersC.insertUserPhone(authCode.getPhone());
+            errno = 2001;
+            errmsg = "需要注册";
+            map.put("needRegister",true);
+            map.put("success",false);
+            return json.createJson(map,errmsg,errno);
+        }
         if(authCode.getPhone() == null ||  authCode.getPhone().equals("")) {
             errno = 3001;
             errmsg = "请输入手机号";
@@ -45,13 +62,15 @@ public class AuthCodeC {
         }
         // 这个是获取验证码主体代码，获取验证码
         authCode.setCode(SendCodeUtils.getCode(authCode.getPhone()));
+//        authCode.setCode("123456");
         if("".equals(authCode.getCode())){
             errno = 3003;
             errmsg = "获取验证码失败，请重试";
+
         }
         // 连接service层,将数据添加到数据库中
         authCodeService.addAuthCode(authCode);
-        return json.createJson(null,errmsg,errno);
+        return json.createJson(map,errmsg,errno);
     }
 
     @RequestMapping(value="/login-confirm", method = {RequestMethod.GET,RequestMethod.POST})
