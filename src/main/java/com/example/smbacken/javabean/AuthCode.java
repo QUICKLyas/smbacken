@@ -13,15 +13,16 @@ public class AuthCode {
     private String phone;
     private String email;
     private String code;
-
+    private String imageCode;
     public AuthCode() {
     }
 
-    public AuthCode(ObjectId _id, String phone, String email, String code) {
+    public AuthCode(ObjectId _id, String phone, String email, String code, String imageCode) {
         this._id = _id;
         this.phone = phone;
         this.email = email;
         this.code = code;
+        this.imageCode = imageCode;
     }
 
     @Override
@@ -31,7 +32,16 @@ public class AuthCode {
                 ", phone='" + phone + '\'' +
                 ", email='" + email + '\'' +
                 ", code='" + code + '\'' +
+                ", imageCode='" + imageCode + '\'' +
                 '}';
+    }
+
+    public String getImageCode() {
+        return imageCode;
+    }
+
+    public void setImageCode(String imageCode) {
+        this.imageCode = imageCode;
     }
 
     public String getPhone() {

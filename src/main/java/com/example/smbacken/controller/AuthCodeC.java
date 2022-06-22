@@ -3,6 +3,7 @@ package com.example.smbacken.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.example.smbacken.javabean.AuthCode;
 import com.example.smbacken.service.AuthCodeService;
+import com.example.smbacken.util.VerifyUtil;
 import com.example.smbacken.util.Json;
 import com.example.smbacken.util.PhoneUtils;
 import com.example.smbacken.util.SendCodeUtils;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,17 +75,42 @@ public class AuthCodeC {
         return json.createJson(map,errmsg,errno);
     }
 
+    @RequestMapping(value = "/image-code", method = {RequestMethod.GET,RequestMethod.POST})
+    public JSONObject getImageCode(@RequestBody AuthCode authCode, HttpServletRequest request, HttpServletResponse response){
+        Object[] objects = VerifyUtil.createImage();
+        String randomStr = (String) objects[0];
+//        log.info("randomStr result:" + objects.toString());
+        // 将这个code存储到数据库中，做临时的存储
+
+        authCodeService.updateAuthImageCode(authCode.getPhone(),objects[0].toString());
+//        System.out.println(objects[0].toString());
+        return json.createJson(objects[1].toString().replaceAll("\r|\n",""));
+
+    }
+
     @RequestMapping(value="/login-confirm", method = {RequestMethod.GET,RequestMethod.POST})
     public JSONObject loginConfirm(@RequestBody AuthCode authCode, HttpServletRequest request, HttpServletResponse response){
+        // 判断这个字段是否已经传入
+        if (authCode.getPhone() == null ){
+            return json.createJson(0,"请输入手机号",2001);
+        }
+        // 判断手机号是否存在AuthCode
         if (!authCodeService.isAuthExist(authCode.getPhone())){
             return json.createJson(0,"手机号不存在",2001);
         }
-        List<String> list= authCodeService.getAuthCode(authCode.getPhone());
-        if(list.contains(authCode.getCode())){
-            authCodeService.deleteAuthCode(authCode.getPhone());
-            return json.createJson(1);
-        } else {
-            return json.createJson(0,"请重新输入验证码",2001);
+        // 获取两个字符串
+        List<String> listImageCode = authCodeService.getAuthImageCode(authCode.getPhone());
+        List<String> listCode= authCodeService.getAuthCode(authCode.getPhone());
+        // 手机号存在，判断手机验证吗是否传入
+        if (authCode.getCode() == null ) {
+            return json.createJson(0,"请输入手机验证码",2001);
+        } else { // 有传入对应的手机验证码，判断是否有图形验证码，有就判断两个验证码，
+            if (listImageCode.contains(authCode.getImageCode()) && listCode.contains(authCode.getCode())) { // 没有图形验证码，单独判断手机验证码
+                    authCodeService.deleteAuthCode(authCode.getPhone());
+                    return json.createJson(1);
+            } else {
+                return json.createJson(0,"请重新输入验证码",2001);
+            }
         }
     }
     @RequestMapping (value = "/find-all", method = {RequestMethod.GET,RequestMethod.POST})

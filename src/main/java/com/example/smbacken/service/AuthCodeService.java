@@ -11,10 +11,15 @@ public interface AuthCodeService {
 
     // 增加一条文档
     public void addAuthCode(AuthCode authCode);
+    public void updateAuthImageCode(String phone,String imageCode);
     // 根据电话号码判断是否存在这个文档
     public boolean isAuthExist(String phone);
     // 根据phone的值的获取文档
     public List<String> getAuthCode(String phone);
+    public List<String> getAuthImageCode(String phone);
+
     // 根据phone的值删除文档
     public void deleteAuthCode(String phone);
+
+    public boolean isAuthImageCodeExist(String phone, String imageCode);
 }
