@@ -50,7 +50,7 @@ public class AuthCodeServiceImpl implements AuthCodeService {
     @Override
     public boolean isAuthExist(String phone) {
         List<String> list = getAuthCode(phone);
-        if (list.size() != 0) {
+        if (list.size() != 0 ) {
             DateF.getTime("isAuthExist : " + list + " true");
             return true;
         } else {
@@ -61,7 +61,7 @@ public class AuthCodeServiceImpl implements AuthCodeService {
     @Override
     public boolean isAuthImageCodeExist(String phone, String imageCode) {
         List<String> list = getAuthImageCode(phone);
-        if (list.size() != 0){
+        if (list.size() != 0 ){
             DateF.getTime("isAuthImageCodeExist : " + list + " true");
             return true;
         } else {
