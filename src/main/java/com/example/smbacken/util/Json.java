@@ -52,9 +52,9 @@ public class Json {
 
         // 输出body传入的接口
         JSONObject json = JSONObject.parseObject(reqBody);
-
-        System.out.println("recv ntydel from:" + request.getRequestURI());
-        System.out.println("recv json data:" + json);
+        DateF.getTime("recv ntydel from:" + request.getRequestURI() + "  " + "recv json data:" + json);
+//        System.out.println("recv ntydel from:" + request.getRequestURI());
+//        System.out.println("recv json data:" + json);
         // return
         return json;
     }
