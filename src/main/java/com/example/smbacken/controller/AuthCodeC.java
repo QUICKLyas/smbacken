@@ -1,12 +1,10 @@
 package com.example.smbacken.controller;
 
+import com.alibaba.druid.util.DaemonThreadFactory;
 import com.alibaba.fastjson.JSONObject;
 import com.example.smbacken.javabean.AuthCode;
 import com.example.smbacken.service.AuthCodeService;
-import com.example.smbacken.util.VerifyUtil;
-import com.example.smbacken.util.Json;
-import com.example.smbacken.util.PhoneUtils;
-import com.example.smbacken.util.SendCodeUtils;
+import com.example.smbacken.util.*;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,16 +39,21 @@ public class AuthCodeC {
         // 设置返回信息的缓存变量
         int errno = 200;
         String errmsg = "验证码获取成功";
+
         // 首先判断是否存在这个用户 ，存在就继续，不存在我们返回前端信息，并等待下次的请求
         if(usersC.isUserExist(authCode.getPhone())){ // 表示用户存在，不需要注册 needRegister: false
             map.put("needRegister", false);
             map.put("success",true);
         } else { // 表示用户不存在，需要注册 needRegister: true
+            DateF.getTime("needRegister: true");
             usersC.insertUserPhone(authCode.getPhone());
             errno = 2001;
+            authCode.setCode(SendCodeUtils.getCode(authCode.getPhone()));
+//            System.out.println(authCode.getCode());
             errmsg = "需要注册";
             map.put("needRegister",true);
-            map.put("success",false);
+            map.put("success",true);
+            authCodeService.addAuthCode(authCode);
             return json.createJson(map,errmsg,errno);
         }
         if(authCode.getPhone() == null ||  authCode.getPhone().equals("")) {
@@ -63,7 +66,7 @@ public class AuthCodeC {
             errmsg = "请输入正确格式手机号";
         }
         // 这个是获取验证码主体代码，获取验证码
-        authCode.setCode(SendCodeUtils.getCode(authCode.getPhone()));
+
 //        authCode.setCode("123456");
         if("".equals(authCode.getCode())){
             errno = 3003;

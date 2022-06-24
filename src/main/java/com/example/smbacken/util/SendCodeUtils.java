@@ -19,15 +19,15 @@ public class SendCodeUtils {
     private static final String SERVER_URL = "https://api.netease.im/sms/sendcode.action";
     // TODO
     // 网易云信分配的账号，请替换你在管理后台应用下申请的Appkey
-    private static final String APP_KEY = "2ceab4c8ded1e2dfb4b2a5a4b930b9d5";
+    private static final String APP_KEY = "2813b68156bf9e141ace9c43433c7e63";
     // TODO
     // 网易云信分配的密钥，请替换你在管理后台应用下申请的appSecret
-    private static final String APP_SECRET = "71ebc1beb5f1";
+    private static final String APP_SECRET = "43c33234b5df";
     //随机数
     private static final String NONCE = "123456";
     // TODO
     // 短信模板ID
-    private static final String TEMPLATEID = "19507839";
+    private static final String TEMPLATEID = "19512818";
     // TODO
     // 手机号
     private static final String MOBILE = "1864283";
@@ -54,6 +54,7 @@ public class SendCodeUtils {
      * @param phone
      */
     private static String sendSms(String phone) throws IOException {
+//        System.out.println(phone);
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
 
         HttpPost httpPost = new HttpPost(SERVER_URL);
